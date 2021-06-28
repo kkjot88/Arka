@@ -9,11 +9,32 @@
 #pragma resource "*.dfm"
 TG *G;
 
-        int x = 8;
-        int y = 8;
+        int x = 0;
+        int y = 0;
+        int tempx = x;
+        int tempy = y;
 
-        int BallsLP = 3;
-        int BallsRP = 3;
+        int BallsLP = 0;
+        int BallsRP = 0;
+
+        int hitCounter = 0;
+
+void endGame(){
+        G->BT->Enabled = false;
+        G->B->Enabled = false;
+        G->B->Visible = false;
+        G->hits->Enabled = true;
+        G->hits->Visible = true;
+        G->hits->Caption = "Number of hits: " + IntToStr(hitCounter);
+        G->winner->Enabled = true;
+        G->winner->Visible = true;
+        if (G->LPB1->Visible == false) {
+                G->winner->Caption = "Right player is the winner!";
+        }
+        if (G->RPB1->Visible == false) {
+                G->winner->Caption = "Left player is the winner!";
+        }
+}
 
 //---------------------------------------------------------------------------
 __fastcall TG::TG(TComponent* Owner)
@@ -47,7 +68,7 @@ void __fastcall TG::UpLPTimer(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TG::DownLPTimer(TObject *Sender)
 {
-        if ((LP->Top + LP->Height) < (BG->Height - 8))
+        if ((LP->Top + LP->Height) < (BG->Height - MB->Height - 8))
                 LP->Top += 8;
 }
 //---------------------------------------------------------------------------
@@ -58,12 +79,17 @@ void __fastcall TG::UpRPTimer(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TG::DownRPTimer(TObject *Sender)
 {
-        if ((RP->Top + RP->Height) < (BG->Height - 8))
+        if ((RP->Top + RP->Height) < (BG->Height - MB->Height - 8))
                 RP->Top += 8;
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::BTTimer(TObject *Sender)
 {
+        if (LPB1->Visible == false || RPB1->Visible == false){
+                endGame();
+                return;
+        }
+
         BT->Interval = 8;
         B->Left += x;
         B->Top += y;
@@ -94,8 +120,10 @@ void __fastcall TG::BTTimer(TObject *Sender)
 
         //LP Hit
         if (ballHitBoxD > LPHitBoxU && ballHitBoxU < LPHitBoxD){
-                if (ballHitBoxL <= LPHitBoxR)
+                if (ballHitBoxL <= LPHitBoxR) {
                         x = -x;
+                        hitCounter++;
+                }
         }
         //LP Lose
         else {
@@ -104,14 +132,16 @@ void __fastcall TG::BTTimer(TObject *Sender)
                         B->Top = BG->Top + (BG->Height / 2) - (B->Height / 2);
                         x = -x;
                         BallsLP--;
-                        BT->Interval = 1000;
+                        if (BallsLP != 0) BT->Interval = 1000;
                 }
         }
 
         //RP Hit
         if (ballHitBoxD > RPHitBoxU && ballHitBoxU < RPHitBoxD){
-                if (ballHitBoxR >= RPHitBoxL)
+                if (ballHitBoxR >= RPHitBoxL) {
                         x = -x;
+                        hitCounter++;
+                }
         }
         //RP Lose
         else {
@@ -120,7 +150,7 @@ void __fastcall TG::BTTimer(TObject *Sender)
                         B->Top = BG->Top + (BG->Height / 2) - (B->Height / 2);
                         x = -x;
                         BallsRP--;
-                        BT->Interval = 1000;
+                        if (BallsRP != 0) BT->Interval = 1000;
                 }
         }
 
@@ -170,3 +200,79 @@ void __fastcall TG::BTTimer(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+void __fastcall TG::PauseClick(TObject *Sender)
+{
+        tempx = x;
+        tempy = y;
+
+        x = 0;
+        y = 0;
+
+        Pause->Enabled = false;
+        Pause->Visible = false;
+
+        Resume->Enabled = true;
+        Resume->Visible = true;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TG::StartClick(TObject *Sender)
+{
+        BT->Enabled = true;
+
+        B->Enabled = true;
+        B->Visible = true;
+
+        BallsLP = 3;
+        BallsRP = 3;
+
+        int xRandom = random(2);
+        int yRandom = random(2);
+
+        if (xRandom == 0) x = 8;
+        else x = -8;
+
+        if (yRandom == 0) y = 8;
+        else y = -8;
+
+        LPB1->Visible = true;
+        LPB2->Visible = true;
+        LPB3->Visible = true;
+
+        RPB1->Visible = true;
+        RPB2->Visible = true;
+        RPB3->Visible = true;
+
+        Pause->Enabled = false;
+        Pause->Enabled = true;
+        Pause->Visible = true;
+
+        Resume->Enabled = false;
+        Resume->Visible = false;
+
+        Start->Enabled = false;
+        Start->Visible = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TG::ResumeClick(TObject *Sender)
+{
+        x = tempx;
+        y = tempy;
+
+        Resume->Enabled = false;
+        Resume->Visible = false;
+        Pause->Enabled = true;
+        Pause->Visible = true;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TG::FormCreate(TObject *Sender)
+{
+        randomize();
+}
+//---------------------------------------------------------------------------
+
+

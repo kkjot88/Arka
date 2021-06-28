@@ -29,6 +29,13 @@ __published:	// IDE-managed Components
         TImage *RPB2;
         TImage *RPB1;
         TShape *MB;
+        TButton *Pause;
+        TButton *Resume;
+        TButton *Start;
+        TLabel *hits;
+        TLabel *winner;
+        TTimer *ST;
+        TLabel *countDown;
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
           TShiftState Shift);
         void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
@@ -38,6 +45,10 @@ __published:	// IDE-managed Components
         void __fastcall UpRPTimer(TObject *Sender);
         void __fastcall DownRPTimer(TObject *Sender);
         void __fastcall BTTimer(TObject *Sender);
+        void __fastcall PauseClick(TObject *Sender);
+        void __fastcall StartClick(TObject *Sender);
+        void __fastcall ResumeClick(TObject *Sender);
+        void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TG(TComponent* Owner);
