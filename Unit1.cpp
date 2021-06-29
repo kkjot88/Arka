@@ -20,6 +20,8 @@ TG *G;
         int hitCounter = 0;
         int goCounter = 0;
 
+        bool paddleLock = false;
+
 void endGame(){
         G->BT->Enabled = false;
         G->B->Enabled = false;
@@ -44,11 +46,14 @@ void endGame(){
         G->Start->Enabled = true;
         G->Start->Visible = true;
         G->Start->Caption = "Again!";
+
+        paddleLock = true;
 }
 
 void startCountDown() {
         goCounter = 0;
         G->BT->Enabled = false;
+        paddleLock = true;
         G->Resume->Enabled = false;
         G->Resume->Visible = false;
         G->Pause->Enabled = false;
@@ -64,6 +69,7 @@ void startCountDown() {
         G->BT->Enabled = true;
         G->Pause->Enabled = true;
         G->Pause->Visible = true;
+        paddleLock = false;
         G->countDown->Caption = "Go!";
 }
 
@@ -94,24 +100,32 @@ void __fastcall TG::FormKeyUp(TObject *Sender, WORD &Key,
 //---------------------------------------------------------------------------
 void __fastcall TG::UpLPTimer(TObject *Sender)
 {
-        if (LP->Top > 8) LP->Top -= 16;
+        if (!paddleLock) {
+                if (LP->Top > 8) LP->Top -= 16;
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::DownLPTimer(TObject *Sender)
 {
-        if ((LP->Top + LP->Height) < (BG->Height - MB->Height - 8))
-                LP->Top += 16;
+        if (!paddleLock) {
+                if ((LP->Top + LP->Height) < (BG->Height - MB->Height - 8))
+                        LP->Top += 16;
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::UpRPTimer(TObject *Sender)
 {
-        if (RP->Top > 8) RP->Top -= 16;
+        if (!paddleLock) {
+                if (RP->Top > 8) RP->Top -= 16;
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::DownRPTimer(TObject *Sender)
 {
-        if ((RP->Top + RP->Height) < (BG->Height - MB->Height - 8))
-                RP->Top += 16;
+        if (!paddleLock) {
+                if ((RP->Top + RP->Height) < (BG->Height - MB->Height - 8))
+                        RP->Top += 16;
+        }
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::BTTimer(TObject *Sender)
@@ -321,6 +335,8 @@ void __fastcall TG::StartClick(TObject *Sender)
 
         Resume->Enabled = false;
         Resume->Visible = false;
+
+        paddleLock = false;
 }
 //---------------------------------------------------------------------------
 
