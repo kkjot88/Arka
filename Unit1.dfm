@@ -1,6 +1,6 @@
 object G: TG
-  Left = 2288
-  Top = 301
+  Left = 2283
+  Top = 315
   BorderStyle = bsDialog
   Caption = 'Ping Pong'
   ClientHeight = 560
@@ -1237,17 +1237,17 @@ object G: TG
     Visible = False
   end
   object countDown: TLabel
-    Left = 480
-    Top = 80
-    Width = 64
-    Height = 64
+    Left = 448
+    Top = 64
+    Width = 128
+    Height = 96
     Alignment = taCenter
     AutoSize = False
-    Caption = '1'
+    Caption = '!'
     Enabled = False
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
-    Font.Height = -43
+    Font.Height = -64
     Font.Name = 'Comic Sans MS'
     Font.Style = []
     ParentFont = False
@@ -1260,6 +1260,7 @@ object G: TG
     Width = 128
     Height = 32
     Caption = 'Pause'
+    Enabled = False
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -21
@@ -1267,6 +1268,7 @@ object G: TG
     Font.Style = []
     ParentFont = False
     TabOrder = 0
+    Visible = False
     OnClick = PauseClick
   end
   object Resume: TButton
@@ -1275,6 +1277,7 @@ object G: TG
     Width = 128
     Height = 32
     Caption = 'Resume'
+    Enabled = False
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -21
@@ -1282,6 +1285,7 @@ object G: TG
     Font.Style = []
     ParentFont = False
     TabOrder = 1
+    Visible = False
     OnClick = ResumeClick
   end
   object Start: TButton

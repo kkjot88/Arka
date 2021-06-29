@@ -18,6 +18,7 @@ TG *G;
         int BallsRP = 0;
 
         int hitCounter = 0;
+        int goCounter = 0;
 
 void endGame(){
         G->BT->Enabled = false;
@@ -34,6 +35,36 @@ void endGame(){
         if (G->RPB1->Visible == false) {
                 G->winner->Caption = "Left player is the winner!";
         }
+
+        G->Resume->Enabled = false;
+        G->Resume->Visible = false;
+        G->Pause->Enabled = false;
+        G->Pause->Visible = false;
+
+        G->Start->Enabled = true;
+        G->Start->Visible = true;
+        G->Start->Caption = "Again!";
+}
+
+void startCountDown() {
+        goCounter = 0;
+        G->BT->Enabled = false;
+        G->Resume->Enabled = false;
+        G->Resume->Visible = false;
+        G->Pause->Enabled = false;
+        G->Pause->Visible = false;
+        G->countDown->Enabled = true;
+        G->countDown->Visible = true;
+        G->countDown->Caption = "3";
+        Application->ProcessMessages(); Sleep(1000);
+        G->countDown->Caption = "2";
+        Application->ProcessMessages(); Sleep(1000);
+        G->countDown->Caption = "1";
+        Application->ProcessMessages(); Sleep(1000);
+        G->BT->Enabled = true;
+        G->Pause->Enabled = true;
+        G->Pause->Visible = true;
+        G->countDown->Caption = "Go!";
 }
 
 //---------------------------------------------------------------------------
@@ -63,24 +94,24 @@ void __fastcall TG::FormKeyUp(TObject *Sender, WORD &Key,
 //---------------------------------------------------------------------------
 void __fastcall TG::UpLPTimer(TObject *Sender)
 {
-        if (LP->Top > 8) LP->Top -= 8;
+        if (LP->Top > 8) LP->Top -= 16;
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::DownLPTimer(TObject *Sender)
 {
         if ((LP->Top + LP->Height) < (BG->Height - MB->Height - 8))
-                LP->Top += 8;
+                LP->Top += 16;
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::UpRPTimer(TObject *Sender)
 {
-        if (RP->Top > 8) RP->Top -= 8;
+        if (RP->Top > 8) RP->Top -= 16;
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::DownRPTimer(TObject *Sender)
 {
         if ((RP->Top + RP->Height) < (BG->Height - MB->Height - 8))
-                RP->Top += 8;
+                RP->Top += 16;
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::BTTimer(TObject *Sender)
@@ -88,6 +119,12 @@ void __fastcall TG::BTTimer(TObject *Sender)
         if (LPB1->Visible == false || RPB1->Visible == false){
                 endGame();
                 return;
+        }
+
+        goCounter++;
+        if (goCounter > 125) {
+                G->countDown->Enabled = false;
+                G->countDown->Visible = false;
         }
 
         BT->Interval = 8;
@@ -123,6 +160,14 @@ void __fastcall TG::BTTimer(TObject *Sender)
                 if (ballHitBoxL <= LPHitBoxR) {
                         x = -x;
                         hitCounter++;
+                        if (hitCounter % 8 == 0) {
+                                if (x < 0) {
+                                        x = x - 2;
+                                }
+                                else {
+                                        x = x + 2;
+                                }
+                        }
                 }
         }
         //LP Lose
@@ -132,7 +177,32 @@ void __fastcall TG::BTTimer(TObject *Sender)
                         B->Top = BG->Top + (BG->Height / 2) - (B->Height / 2);
                         x = -x;
                         BallsLP--;
-                        if (BallsLP != 0) BT->Interval = 1000;
+                        LP->Top = 192;
+                        RP->Top = 192;
+                        if (BallsLP == 3){
+                                LPB1->Visible = true;
+                                LPB2->Visible = true;
+                                LPB3->Visible = true;
+                        }
+                        if (BallsLP == 2){
+                                LPB1->Visible = true;
+                                LPB2->Visible = true;
+                                LPB3->Visible = false;
+                        }
+                        if (BallsLP == 1){
+                                LPB1->Visible = true;
+                                LPB2->Visible = false;
+                                LPB3->Visible = false;
+                        }
+                        if (BallsLP == 0){
+                                LPB1->Visible = false;
+                                LPB2->Visible = false;
+                                LPB3->Visible = false;
+                                countDown->Enabled = false;
+                                countDown->Visible = false;
+                                return;
+                        }
+                        startCountDown();
                 }
         }
 
@@ -141,6 +211,14 @@ void __fastcall TG::BTTimer(TObject *Sender)
                 if (ballHitBoxR >= RPHitBoxL) {
                         x = -x;
                         hitCounter++;
+                        if (hitCounter % 8 == 0) {
+                                if (x < 0) {
+                                        x = x - 2;
+                                }
+                                else {
+                                        x = x + 2;
+                                }
+                        }
                 }
         }
         //RP Lose
@@ -150,54 +228,34 @@ void __fastcall TG::BTTimer(TObject *Sender)
                         B->Top = BG->Top + (BG->Height / 2) - (B->Height / 2);
                         x = -x;
                         BallsRP--;
-                        if (BallsRP != 0) BT->Interval = 1000;
+                        LP->Top = 192;
+                        RP->Top = 192;
+                        if (BallsRP == 3){
+                                RPB1->Visible = true;
+                                RPB2->Visible = true;
+                                RPB3->Visible = true;
+                        }
+                        if (BallsRP == 2){
+                                RPB1->Visible = true;
+                                RPB2->Visible = true;
+                                RPB3->Visible = false;
+                        }
+                        if (BallsRP == 1){
+                                RPB1->Visible = true;
+                                RPB2->Visible = false;
+                                RPB3->Visible = false;
+                        }
+                        if (BallsRP == 0){
+                                RPB1->Visible = false;
+                                RPB2->Visible = false;
+                                RPB3->Visible = false;
+                                countDown->Enabled = false;
+                                countDown->Visible = false;
+                                return;
+                        }
+                        startCountDown();
                 }
         }
-
-        //LP Balls
-        if (BallsLP == 3){
-                LPB1->Visible = true;
-                LPB2->Visible = true;
-                LPB3->Visible = true;
-        }
-        if (BallsLP == 2){
-                LPB1->Visible = true;
-                LPB2->Visible = true;
-                LPB3->Visible = false;
-        }
-        if (BallsLP == 1){
-                LPB1->Visible = true;
-                LPB2->Visible = false;
-                LPB3->Visible = false;
-        }
-        if (BallsLP == 0){
-                LPB1->Visible = false;
-                LPB2->Visible = false;
-                LPB3->Visible = false;
-        }
-
-        //RP Balls
-        if (BallsRP == 3){
-                RPB1->Visible = true;
-                RPB2->Visible = true;
-                RPB3->Visible = true;
-        }
-        if (BallsRP == 2){
-                RPB1->Visible = true;
-                RPB2->Visible = true;
-                RPB3->Visible = false;
-        }
-        if (BallsRP == 1){
-                RPB1->Visible = true;
-                RPB2->Visible = false;
-                RPB3->Visible = false;
-        }
-        if (BallsRP == 0){
-                RPB1->Visible = false;
-                RPB2->Visible = false;
-                RPB3->Visible = false;
-        }
-
 }
 //---------------------------------------------------------------------------
 void __fastcall TG::PauseClick(TObject *Sender)
@@ -219,8 +277,6 @@ void __fastcall TG::PauseClick(TObject *Sender)
 
 void __fastcall TG::StartClick(TObject *Sender)
 {
-        BT->Enabled = true;
-
         B->Enabled = true;
         B->Visible = true;
 
@@ -244,15 +300,27 @@ void __fastcall TG::StartClick(TObject *Sender)
         RPB2->Visible = true;
         RPB3->Visible = true;
 
+        Start->Enabled = false;
+        Start->Visible = false;
+
+        hits->Enabled = false;
+        hits->Visible = false;
+
+        winner->Enabled = false;
+        winner->Visible = false;
+
         Pause->Enabled = false;
+        Pause->Visible = false;
+        Resume->Enabled = false;
+        Resume->Visible = false;
+
+        startCountDown();
+
         Pause->Enabled = true;
         Pause->Visible = true;
 
         Resume->Enabled = false;
         Resume->Visible = false;
-
-        Start->Enabled = false;
-        Start->Visible = false;
 }
 //---------------------------------------------------------------------------
 
@@ -263,6 +331,9 @@ void __fastcall TG::ResumeClick(TObject *Sender)
 
         Resume->Enabled = false;
         Resume->Visible = false;
+
+        startCountDown();
+
         Pause->Enabled = true;
         Pause->Visible = true;
 }
@@ -272,7 +343,15 @@ void __fastcall TG::ResumeClick(TObject *Sender)
 void __fastcall TG::FormCreate(TObject *Sender)
 {
         randomize();
+        AnsiString leftPlayer = "Left player controls: W - up, S - down.";
+        AnsiString rightPlayer = "Right player controls: Up Arrow Key - up, Down Arrow Key - down." ;
+        AnstString loseCond = "First player to lose three balls loses game";
+        AnsiString ballSpeed = "Every eight hits ball speed goes up slightly";
+        AnsiString pauseButton = "Game can be paused at will";
+        ShowMessage(leftPlayer + sLineBreak + rightPlayer + sLineBreak + sLineBreak
+         + loseCond + sLineBreak + ballSpeed + sLineBreak + pauseButton);
 }
 //---------------------------------------------------------------------------
+
 
 
